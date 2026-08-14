@@ -30,6 +30,8 @@ ROWS = [
 ]
 
 LINK = {
+    "header": f"https://{USER}.github.io/cv/",
+    "shooter": f"https://github.com/{USER}/{USER}",
     "code": f"https://github.com/{USER}?tab=repositories",
     "link-cv": f"https://{USER}.github.io/cv/",
     "link-orcid": "https://orcid.org/0009-0005-5939-4192",

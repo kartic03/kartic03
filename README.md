@@ -6,11 +6,15 @@
      panels are designed as dark cards and read as intentional on a light
      GitHub theme. The light SVGs are still generated for the preview page. -->
 
-<img alt="Kartic - AI protein design to expression and in vitro validation" src="./dist/header-dark.svg" width="880">
+<!-- Every image is wrapped in a link on purpose. GitHub auto-links any image
+     that is not already inside an <a> to the raw file in the repo, so an
+     unwrapped panel opens as a still SVG when you click it. -->
+
+<a href="https://kartic03.github.io/cv/"><img alt="Kartic - AI protein design to expression and in vitro validation" src="./dist/header-dark.svg" width="880"></a>
 
 <a href="https://github.com/kartic03?tab=repositories"><img alt="Repositories, most recently pushed first; all 8 behind the link" src="./dist/code-dark.svg" width="880"></a>
 
-<img alt="Contribution calendar as an arcade shooter: empty days destroyed, contribution pattern revealed" src="./dist/shooter-dark.svg" width="880">
+<a href="https://github.com/kartic03/kartic03"><img alt="Contribution calendar as an arcade shooter: empty days destroyed, contribution pattern revealed" src="./dist/shooter-dark.svg" width="880"></a>
 
 <a href="https://kartic03.github.io/cv/"><img alt="CV: kartic03.github.io/cv" src="./dist/link-cv-dark.svg" width="200"></a> <a href="https://orcid.org/0009-0005-5939-4192"><img alt="ORCID: 0009-0005-5939-4192" src="./dist/link-orcid-dark.svg" width="200"></a> <a href="mailto:karticmishra03@gmail.com"><img alt="EMAIL: karticmishra03@gmail.com" src="./dist/link-email-dark.svg" width="200"></a> <a href="https://github.com/kartic03"><img alt="GITHUB: github.com/kartic03" src="./dist/link-github-dark.svg" width="200"></a>
 
