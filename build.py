@@ -9,9 +9,9 @@ import sys
 import time
 
 STEPS = [
-    ("header",  ["header.py"],  True),     # hits the API for languages
-    ("panels",  ["panels.py"],  False),    # toolchain, code, footer
-    ("shooter", ["shooter.py"], True),     # reads the live calendar
+    ("header",  ["header.py"],  True),     # profile, languages, avatar
+    ("panels",  ["panels.py"],  True),     # live repository list
+    ("shooter", ["shooter.py"], True),     # live contribution calendar
 ]
 
 
