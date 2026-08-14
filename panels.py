@@ -310,7 +310,11 @@ def code_head(t: dict, shown: int) -> str:
     return "".join(o)
 
 
-TILE_W, TILE_H = 434, 62
+# The profile README column is 831px at its widest, and the whitespace between
+# two inline images costs about 4.5px more. Two tiles have to fit inside that
+# or each drops onto its own line and the grid becomes a single column.
+COLUMN = 831
+TILE_W, TILE_H = 408, 62
 
 
 def repo_tile(t: dict, r: dict, i: int) -> str:
@@ -421,9 +425,8 @@ def code(t: dict, repos: list | None = None, total: int | None = None) -> str:
 
 
 # ══════════════════════════════════════════════════════════════════════════
-# 4 x 211 leaves room for the gaps between them inside the 880 the other
-# panels occupy; at 214 the fourth chip wraps to its own line.
-CHIP_W, CHIP_H = 211, 72
+# Same arithmetic as the tiles, four across: 4 x 200 plus three gaps fits 831.
+CHIP_W, CHIP_H = 200, 72
 
 
 def link_chip(t: dict, label: str, val: str, i: int) -> str:
@@ -561,11 +564,11 @@ def main() -> int:
         rows.append(" ".join(
             f'<a href="https://github.com/{args.user}/{r["name"]}">'
             f'<img alt="{esc(r["name"])}" src="./dist/repo-{i+j}-dark.svg" '
-            f'width="434"></a>'
+            f'width="{TILE_W}"></a>'
             for j, r in enumerate(pinned[i:i + 2])))
     links = " ".join(
         f'<a href="{href}"><img alt="{label}: {esc(val)}" '
-        f'src="./dist/link-{key}-dark.svg" width="211"></a>'
+        f'src="./dist/link-{key}-dark.svg" width="{CHIP_W}"></a>'
         for key, label, val, href in LINKS)
 
     with open(args.readme, "w", encoding="utf-8") as fh:

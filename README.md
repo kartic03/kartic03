@@ -10,16 +10,16 @@
 
 <img alt="Code" src="./dist/code-head-dark.svg" width="880">
 
-<a href="https://github.com/kartic03/cv"><img alt="cv" src="./dist/repo-0-dark.svg" width="434"></a> <a href="https://github.com/kartic03/ppmi-csf-cognitive-decline"><img alt="ppmi-csf-cognitive-decline" src="./dist/repo-1-dark.svg" width="434"></a>
-<a href="https://github.com/kartic03/Toxbench"><img alt="Toxbench" src="./dist/repo-2-dark.svg" width="434"></a> <a href="https://github.com/kartic03/eeg-fm-shortcut-audit"><img alt="eeg-fm-shortcut-audit" src="./dist/repo-3-dark.svg" width="434"></a>
-<a href="https://github.com/kartic03/DBS-Candidacy-Screening"><img alt="DBS-Candidacy-Screening" src="./dist/repo-4-dark.svg" width="434"></a> <a href="https://github.com/kartic03/RATAN-PBind"><img alt="RATAN-PBind" src="./dist/repo-5-dark.svg" width="434"></a>
-<a href="https://github.com/kartic03/BBB-Trans-AI"><img alt="BBB-Trans-AI" src="./dist/repo-6-dark.svg" width="434"></a> <a href="https://github.com/kartic03/DBS-BBB-Multimodal-Fusion"><img alt="DBS-BBB-Multimodal-Fusion" src="./dist/repo-7-dark.svg" width="434"></a>
+<a href="https://github.com/kartic03/cv"><img alt="cv" src="./dist/repo-0-dark.svg" width="408"></a> <a href="https://github.com/kartic03/ppmi-csf-cognitive-decline"><img alt="ppmi-csf-cognitive-decline" src="./dist/repo-1-dark.svg" width="408"></a>
+<a href="https://github.com/kartic03/Toxbench"><img alt="Toxbench" src="./dist/repo-2-dark.svg" width="408"></a> <a href="https://github.com/kartic03/eeg-fm-shortcut-audit"><img alt="eeg-fm-shortcut-audit" src="./dist/repo-3-dark.svg" width="408"></a>
+<a href="https://github.com/kartic03/DBS-Candidacy-Screening"><img alt="DBS-Candidacy-Screening" src="./dist/repo-4-dark.svg" width="408"></a> <a href="https://github.com/kartic03/RATAN-PBind"><img alt="RATAN-PBind" src="./dist/repo-5-dark.svg" width="408"></a>
+<a href="https://github.com/kartic03/BBB-Trans-AI"><img alt="BBB-Trans-AI" src="./dist/repo-6-dark.svg" width="408"></a> <a href="https://github.com/kartic03/DBS-BBB-Multimodal-Fusion"><img alt="DBS-BBB-Multimodal-Fusion" src="./dist/repo-7-dark.svg" width="408"></a>
 
 <a href="https://github.com/kartic03?tab=repositories"><img alt="All 8 repositories" src="./dist/code-all-dark.svg" width="880"></a>
 
 <img alt="Contribution calendar as an arcade shooter: empty days destroyed, contribution pattern revealed" src="./dist/shooter-dark.svg" width="880">
 
-<a href="https://kartic03.github.io/cv/"><img alt="CV: kartic03.github.io/cv" src="./dist/link-cv-dark.svg" width="211"></a> <a href="https://orcid.org/0009-0005-5939-4192"><img alt="ORCID: 0009-0005-5939-4192" src="./dist/link-orcid-dark.svg" width="211"></a> <a href="mailto:karticmishra03@gmail.com"><img alt="EMAIL: karticmishra03@gmail.com" src="./dist/link-email-dark.svg" width="211"></a> <a href="https://github.com/kartic03"><img alt="GITHUB: github.com/kartic03" src="./dist/link-github-dark.svg" width="211"></a>
+<a href="https://kartic03.github.io/cv/"><img alt="CV: kartic03.github.io/cv" src="./dist/link-cv-dark.svg" width="200"></a> <a href="https://orcid.org/0009-0005-5939-4192"><img alt="ORCID: 0009-0005-5939-4192" src="./dist/link-orcid-dark.svg" width="200"></a> <a href="mailto:karticmishra03@gmail.com"><img alt="EMAIL: karticmishra03@gmail.com" src="./dist/link-email-dark.svg" width="200"></a> <a href="https://github.com/kartic03"><img alt="GITHUB: github.com/kartic03" src="./dist/link-github-dark.svg" width="200"></a>
 
 <!--
   Every panel is generated, not hand-drawn.

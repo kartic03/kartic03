@@ -39,7 +39,9 @@ LINK = {
     "link-github": f"https://github.com/{USER}",
 }
 
-WIDTH = {"link-": 211, "repo-": 434}     # everything else is full width
+# Match panels.py, and match what GitHub actually gives a profile README.
+COLUMN = 831
+WIDTH = {"link-": 200, "repo-": 408}     # everything else is full width
 
 PAGE = """<!DOCTYPE html>
 <!-- dark is forced: no prefers-color-scheme query anywhere, so the OS setting
@@ -79,7 +81,9 @@ PAGE = """<!DOCTYPE html>
   #theme.on .bulb .glass{{fill:#FFC862;fill-opacity:.28}}
   /* rows mirror the README: full-width panels alone, tiles two across,
      contact chips four across, wrapping on narrow screens the same way */
-  .row{{display:flex;flex-wrap:wrap;gap:10px;width:min(880px,100%);
+  /* 831px and a ~5px gap are what a profile README actually gives you; the
+     preview is worthless if it lays out in a width GitHub never grants */
+  .row{{display:flex;flex-wrap:wrap;gap:5px;width:min(831px,100%);
     justify-content:flex-start}}
   img{{max-width:100%;height:auto;display:block;border-radius:14px}}
   .row > img, .row > a{{flex:0 1 auto;min-width:0}}
