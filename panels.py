@@ -293,14 +293,17 @@ def toolchain(t: dict) -> str:
 
 
 # ══════════════════════════════════════════════════════════════════════════
-def code(t: dict, repos: list | None = None) -> str:
+def code(t: dict, repos: list | None = None, total: int | None = None) -> str:
+    total = len(repos or []) if total is None else total
     repos = (repos or [])[:MAX_CARDS]
     cols, cw, chh, gap = 2, 402, 54, 14
     rows = (len(repos) + cols - 1) // cols
     top = 82
-    h = top + rows * (chh + gap) + 16
+    h = top + rows * (chh + gap) + 38     # the extra 22 is the "all repos" chip
     loop = 14.0
-    css = []
+    css = ["@keyframes arrow{0%,72%,100%{transform:translateX(0)}"
+           "82%{transform:translateX(3px)}}",
+           ".ar{animation:arrow 3.4s ease-in-out infinite;transform-box:fill-box}"]
     # cards stay put; only the border glow travels, so nothing is ever blank
     for i in range(len(repos)):
         d = i * 0.42
@@ -314,7 +317,7 @@ def code(t: dict, repos: list | None = None) -> str:
     a = o.append
     a(f'<text class="t" x="30" y="38">CODE</text>')
     a(f'<text class="s" x="30" y="56">every computational manuscript ships with a '
-      f'public repository &#183; most recently pushed first</text>')
+      f'public repository &#183; {len(repos)} most recently pushed</text>')
 
     for i, r in enumerate(repos):
         name = r["name"]
@@ -333,6 +336,18 @@ def code(t: dict, repos: list | None = None) -> str:
         a(f'<text class="b" x="{cx+30}" y="{cy+25}">{esc(name)}</text>')
         a(f'<text class="s" x="{cx+30}" y="{cy+40}">{esc(desc)}</text>')
         a("</g>")
+
+    # "all repositories" chip. An SVG served through <img> cannot carry its own
+    # link, so the README wraps this whole panel in an <a> to the repositories
+    # tab; the chip is what tells a reader the panel is clickable at all.
+    lbl = f"ALL {total} REPOSITORIES"
+    cwid = len(lbl) * 5.95 + 40           # 8.5px mono at .1em, plus padding
+    cxx, cyy, cht = W - 30 - cwid, h - 38, 22
+    a(f'<g><rect x="{cxx:.0f}" y="{cyy}" width="{cwid:.0f}" height="{cht}" rx="11" '
+      f'fill="{t["sub"]}" stroke="{t["edge"]}" stroke-width="1"/>'
+      f'<text class="tag" x="{cxx+13:.0f}" y="{cyy+14}" fill="{t["dry"]}">{lbl}</text>'
+      f'<text class="tag ar" x="{cxx+cwid-19:.0f}" y="{cyy+14}" '
+      f'fill="{t["dry"]}">&#8594;</text></g>')
     a("</svg>")
     return "".join(o)
 
@@ -376,17 +391,17 @@ def main() -> int:
     os.makedirs(args.outdir, exist_ok=True)
 
     repos = fetch_repos(args.user)
-    shown = min(len(repos), MAX_CARDS)
-    print(f"{len(repos)} repositories; showing {shown} newest-pushed")
-    if len(repos) > MAX_CARDS:
-        dropped = ", ".join(r["name"] for r in repos[MAX_CARDS:])
-        print(f"!! not shown ({len(repos) - MAX_CARDS}): {dropped}")
+    total = len(repos)
+    print(f"{total} repositories; pinning the {min(total, MAX_CARDS)} newest-pushed")
+    if total > MAX_CARDS:
+        rest = ", ".join(r["name"] for r in repos[MAX_CARDS:])
+        print(f"   behind the chip ({total - MAX_CARDS}): {rest}")
     blank = [r["name"] for r in repos[:MAX_CARDS]
              if not r["desc"] and r["name"] not in DESC_FALLBACK]
     if blank:
         print("!! no description on GitHub and no fallback: " + ", ".join(blank))
 
-    panels = {"code": lambda t: code(t, repos), "footer": footer}
+    panels = {"code": lambda t: code(t, repos, total), "footer": footer}
     for name, fn in panels.items():
         for theme in ("dark", "light"):
             svg = fn(THEMES[theme])
