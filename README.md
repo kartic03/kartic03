@@ -9,16 +9,19 @@
 <!-- Every image is wrapped in an <a> on purpose. GitHub auto-links any image
      that is not already inside one to the raw file in the repo, so an
      unwrapped panel opens as a still SVG when you click it. An <a> with no
-     href does not work: the sanitiser strips it and the auto-link returns.
-     So the header points at this profile - the page it is already on - which
-     is the closest thing to a panel that does not go anywhere.
+     href does not work: GitHub rewrites it into a link to the file.
+
+     The header and the shooter are meant to go nowhere, so they carry a
+     fragment that matches nothing on the page. That satisfies the sanitiser,
+     suppresses the auto-link, and a browser does not scroll for a fragment
+     with no target - unlike href="#", which jumps to the top of the page.
 
      The target="_blank" below is stripped by GitHub's sanitiser, so links
      open in the same tab here whatever this file says. It is kept because it
      is the correct intent and it does work in dist/page.html and in any
      other renderer. Ctrl-click or middle-click for a new tab on GitHub. -->
 
-<a href="https://github.com/kartic03"><img alt="Kartic - AI protein design to expression and in vitro validation" src="./dist/header-dark.svg" width="828"></a>
+<a href="#kartic03-profile"><img alt="Kartic - AI protein design to expression and in vitro validation" src="./dist/header-dark.svg" width="828"></a>
 
 <a href="https://github.com/kartic03?tab=repositories" target="_blank" rel="noopener noreferrer"><img alt="Code" src="./dist/code-head-dark.svg" width="828"></a>
 
@@ -29,7 +32,7 @@
 
 <a href="https://github.com/kartic03?tab=repositories" target="_blank" rel="noopener noreferrer"><img alt="All 8 repositories" src="./dist/code-all-dark.svg" width="828"></a>
 
-<a href="https://github.com/kartic03/kartic03" target="_blank" rel="noopener noreferrer"><img alt="Contribution calendar as an arcade shooter: empty days destroyed, contribution pattern revealed" src="./dist/shooter-dark.svg" width="828"></a>
+<a href="#kartic03-profile"><img alt="Contribution calendar as an arcade shooter: empty days destroyed, contribution pattern revealed" src="./dist/shooter-dark.svg" width="828"></a>
 
 <a href="https://kartic03.github.io/cv/" target="_blank" rel="noopener noreferrer"><img alt="CV: kartic03.github.io/cv" src="./dist/link-cv-dark.svg" width="207"></a><a href="https://orcid.org/0009-0005-5939-4192" target="_blank" rel="noopener noreferrer"><img alt="ORCID: 0009-0005-5939-4192" src="./dist/link-orcid-dark.svg" width="207"></a><a href="https://mail.google.com/mail/u/0/?fs=1&amp;tf=cm&amp;to=karticmishra03@gmail.com" target="_blank" rel="noopener noreferrer"><img alt="EMAIL: karticmishra03@gmail.com" src="./dist/link-email-dark.svg" width="207"></a><a href="https://github.com/kartic03" target="_blank" rel="noopener noreferrer"><img alt="GITHUB: github.com/kartic03" src="./dist/link-github-dark.svg" width="207"></a>
 
