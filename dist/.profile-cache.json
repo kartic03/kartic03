@@ -1,0 +1,18 @@
+{
+ "user": {
+  "login": "kartic03",
+  "name": "Kartic",
+  "company": "Gachon University",
+  "location": "Seoul, South Korea",
+  "public_repos": 8,
+  "avatar_url": "https://avatars.githubusercontent.com/u/185771026?v=4"
+ },
+ "repo_count": 8,
+ "totals": {
+  "Python": 2984361,
+  "Jupyter Notebook": 425943,
+  "HTML": 74889,
+  "Shell": 34697,
+  "R": 9750
+ }
+}
