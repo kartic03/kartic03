@@ -8,11 +8,12 @@
 
 <!-- Every image is wrapped in an <a> on purpose. GitHub auto-links any image
      that is not already inside one to the raw file in the repo, so an
-     unwrapped panel opens as a still SVG when you click it. The header is
-     wrapped in an <a> with no href: that suppresses the auto-link without
-     making the panel navigate anywhere. -->
+     unwrapped panel opens as a still SVG when you click it. An <a> with no
+     href does not work: the sanitiser strips it and the auto-link returns.
+     So the header points at this profile - the page it is already on - which
+     is the closest thing to a panel that does not go anywhere. -->
 
-<a><img alt="Kartic - AI protein design to expression and in vitro validation" src="./dist/header-dark.svg" width="828"></a>
+<a href="https://github.com/kartic03"><img alt="Kartic - AI protein design to expression and in vitro validation" src="./dist/header-dark.svg" width="828"></a>
 
 <a href="https://github.com/kartic03?tab=repositories"><img alt="Code" src="./dist/code-head-dark.svg" width="828"></a>
 
