@@ -44,10 +44,12 @@ jobs:
         run: |
           git config user.name  "Kartic"
           git config user.email "karticmishra03@gmail.com"
-          if git diff --quiet -- dist; then
+          # README.md is generated too: the repository tiles and their links
+          # come from the live repository list, so a new repo rewrites it.
+          if git diff --quiet -- dist README.md; then
             echo "panels unchanged; nothing to commit"
             exit 0
           fi
-          git add dist
+          git add dist README.md
           git commit -m "dist updated"
           git push
