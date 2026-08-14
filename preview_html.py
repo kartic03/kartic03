@@ -24,7 +24,9 @@ USER = "kartic03"
 # on their own line, tiles and chips flowing two and four to a row.
 ROWS = [
     ["header"],
-    ["code"],
+    ["code-head"],
+    "TILES",                       # expands to repo-0 .. repo-N
+    ["code-all"],
     ["shooter"],
     ["link-cv", "link-orcid", "link-email", "link-github"],
 ]
@@ -32,7 +34,8 @@ ROWS = [
 LINK = {
     "header": f"https://{USER}.github.io/cv/",
     "shooter": f"https://github.com/{USER}/{USER}",
-    "code": f"https://github.com/{USER}?tab=repositories",
+    "code-head": f"https://github.com/{USER}?tab=repositories",
+    "code-all": f"https://github.com/{USER}?tab=repositories",
     "link-cv": f"https://{USER}.github.io/cv/",
     "link-orcid": "https://orcid.org/0009-0005-5939-4192",
     "link-email": "mailto:karticmishra03@gmail.com",
@@ -40,8 +43,12 @@ LINK = {
 }
 
 # Match panels.py, and match what GitHub actually gives a profile README.
-COLUMN = 831
-WIDTH = {"link-": 200, "repo-": 408}     # everything else is full width
+COLUMN = 828
+WIDTH = {"link-": COLUMN // 4, "repo-": COLUMN // 2}   # else full width
+
+# A tile normally links to its repository; the CV tile links to the page it
+# deploys. Mirrors REPO_LINK in panels.py.
+REPO_LINK = {"cv": f"https://{USER}.github.io/cv/"}
 
 PAGE = """<!DOCTYPE html>
 <!-- dark is forced: no prefers-color-scheme query anywhere, so the OS setting
@@ -81,9 +88,9 @@ PAGE = """<!DOCTYPE html>
   #theme.on .bulb .glass{{fill:#FFC862;fill-opacity:.28}}
   /* rows mirror the README: full-width panels alone, tiles two across,
      contact chips four across, wrapping on narrow screens the same way */
-  /* 831px and a ~5px gap are what a profile README actually gives you; the
-     preview is worthless if it lays out in a width GitHub never grants */
-  .row{{display:flex;flex-wrap:wrap;gap:5px;width:min(831px,100%);
+  /* 828px with no gap is exactly what the README does: the gutters are
+     drawn inside the images, so the preview must not add any of its own */
+  .row{{display:flex;flex-wrap:wrap;gap:0;width:min(828px,100%);
     justify-content:flex-start}}
   img{{max-width:100%;height:auto;display:block;border-radius:14px}}
   .row > img, .row > a{{flex:0 1 auto;min-width:0}}
@@ -150,7 +157,19 @@ def main() -> int:
     ap.add_argument("--out", default="dist/page.html")
     args = ap.parse_args()
 
-    rows = ROWS
+    tiles = sorted(
+        (f[:-9] for f in os.listdir(args.dir)
+         if f.startswith("repo-") and f.endswith("-dark.svg")),
+        key=lambda s: int(s.split("-")[1]))
+    repo_href = {}
+    if os.path.exists(REPO_CACHE):
+        names = [r["name"] for r in json.load(open(REPO_CACHE, encoding="utf-8"))
+                 if r["name"].lower() != USER.lower()]
+        for i, name in enumerate(names[:len(tiles)]):
+            repo_href[f"repo-{i}"] = REPO_LINK.get(
+                name, f"https://github.com/{USER}/{name}")
+
+    rows = [tiles if r == "TILES" else r for r in ROWS]
     dark, light, present = {}, {}, []
     for row in rows:
         for n in row:
@@ -175,7 +194,7 @@ def main() -> int:
             w = next((v for p, v in WIDTH.items() if n.startswith(p)), 880)
             tag = (f'<img id="p{idx[n]}" alt="{n}" src="{dark[n]}" '
                    f'style="width:{w}px">')
-            href = LINK.get(n)
+            href = LINK.get(n) or repo_href.get(n)
             if href:
                 tag = (f'<a class="panel" href="{href}" target="_blank" '
                        f'rel="noopener">{tag}</a>')

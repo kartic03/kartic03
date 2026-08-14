@@ -10,13 +10,20 @@
      that is not already inside an <a> to the raw file in the repo, so an
      unwrapped panel opens as a still SVG when you click it. -->
 
-<a href="https://kartic03.github.io/cv/"><img alt="Kartic - AI protein design to expression and in vitro validation" src="./dist/header-dark.svg" width="880"></a>
+<a href="https://kartic03.github.io/cv/"><img alt="Kartic - AI protein design to expression and in vitro validation" src="./dist/header-dark.svg" width="828"></a>
 
-<a href="https://github.com/kartic03?tab=repositories"><img alt="Repositories, most recently pushed first; all 8 behind the link" src="./dist/code-dark.svg" width="880"></a>
+<a href="https://github.com/kartic03?tab=repositories"><img alt="Code" src="./dist/code-head-dark.svg" width="828"></a>
 
-<a href="https://github.com/kartic03/kartic03"><img alt="Contribution calendar as an arcade shooter: empty days destroyed, contribution pattern revealed" src="./dist/shooter-dark.svg" width="880"></a>
+<a href="https://kartic03.github.io/cv/"><img alt="cv" src="./dist/repo-0-dark.svg" width="414"></a><a href="https://github.com/kartic03/ppmi-csf-cognitive-decline"><img alt="ppmi-csf-cognitive-decline" src="./dist/repo-1-dark.svg" width="414"></a>
+<a href="https://github.com/kartic03/Toxbench"><img alt="Toxbench" src="./dist/repo-2-dark.svg" width="414"></a><a href="https://github.com/kartic03/eeg-fm-shortcut-audit"><img alt="eeg-fm-shortcut-audit" src="./dist/repo-3-dark.svg" width="414"></a>
+<a href="https://github.com/kartic03/DBS-Candidacy-Screening"><img alt="DBS-Candidacy-Screening" src="./dist/repo-4-dark.svg" width="414"></a><a href="https://github.com/kartic03/RATAN-PBind"><img alt="RATAN-PBind" src="./dist/repo-5-dark.svg" width="414"></a>
+<a href="https://github.com/kartic03/BBB-Trans-AI"><img alt="BBB-Trans-AI" src="./dist/repo-6-dark.svg" width="414"></a><a href="https://github.com/kartic03/DBS-BBB-Multimodal-Fusion"><img alt="DBS-BBB-Multimodal-Fusion" src="./dist/repo-7-dark.svg" width="414"></a>
 
-<a href="https://kartic03.github.io/cv/"><img alt="CV: kartic03.github.io/cv" src="./dist/link-cv-dark.svg" width="200"></a> <a href="https://orcid.org/0009-0005-5939-4192"><img alt="ORCID: 0009-0005-5939-4192" src="./dist/link-orcid-dark.svg" width="200"></a> <a href="mailto:karticmishra03@gmail.com"><img alt="EMAIL: karticmishra03@gmail.com" src="./dist/link-email-dark.svg" width="200"></a> <a href="https://github.com/kartic03"><img alt="GITHUB: github.com/kartic03" src="./dist/link-github-dark.svg" width="200"></a>
+<a href="https://github.com/kartic03?tab=repositories"><img alt="All 8 repositories" src="./dist/code-all-dark.svg" width="828"></a>
+
+<a href="https://github.com/kartic03/kartic03"><img alt="Contribution calendar as an arcade shooter: empty days destroyed, contribution pattern revealed" src="./dist/shooter-dark.svg" width="828"></a>
+
+<a href="https://kartic03.github.io/cv/"><img alt="CV: kartic03.github.io/cv" src="./dist/link-cv-dark.svg" width="207"></a><a href="https://orcid.org/0009-0005-5939-4192"><img alt="ORCID: 0009-0005-5939-4192" src="./dist/link-orcid-dark.svg" width="207"></a><a href="mailto:karticmishra03@gmail.com"><img alt="EMAIL: karticmishra03@gmail.com" src="./dist/link-email-dark.svg" width="207"></a><a href="https://github.com/kartic03"><img alt="GITHUB: github.com/kartic03" src="./dist/link-github-dark.svg" width="207"></a>
 
 <!--
   Every panel is generated, not hand-drawn.
@@ -29,12 +36,16 @@
     shooter.py    contribution calendar as an arcade shooter
     preview.py    stacks every panel into one page for review
 
-  The repository cards are one framed panel, so the whole panel links to one
-  place: the repositories tab. An SVG served through <img> cannot carry links
-  of its own, and GitHub's sanitiser drops inline <svg>, <object> and image
-  maps, so per-card links would mean one image per card and no shared frame.
-  code_head(), repo_tile() and code_all() in panels.py still build that
-  version if the trade is ever worth making the other way round.
+  Each repository is its own image inside its own <a>. That is not a style
+  choice: an SVG served through <img> cannot carry links, and GitHub's
+  sanitiser drops inline <svg>, <object> and image maps, so one card per file
+  is the only way each card can point somewhere different. code() in
+  panels.py still builds the single-framed-panel version, which looks better
+  but sends every card to the same place.
+
+  Every row spans the same width, and gutters are drawn inside the images
+  rather than spaced between them, so nothing depends on how wide a browser
+  renders the whitespace between two inline images.
 
   Cut from the page but still in the source, each one line from returning:
   structure.py (de novo design cascade), and research() and toolchain() in

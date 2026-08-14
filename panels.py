@@ -100,6 +100,10 @@ LANG_DOT = {
 
 MAX_CARDS = 8
 
+# A tile normally links to its repository. These go somewhere more useful:
+# the CV repository is a deployment, and the page it deploys is the point.
+REPO_LINK = {"cv": "https://kartic03.github.io/cv/"}
+
 
 def fetch_repos(user: str) -> list[dict]:
     """Live repository list, newest activity first, cached against API failure.
@@ -151,13 +155,23 @@ def esc(s: str) -> str:
 
 
 def head(t: dict, h: int, label: str, extra_css: str = "",
-         w: int = W, rx: int = 18) -> list[str]:
-    """Card shell shared by every panel, including the drifting wash."""
+         w: int = W, rx: int = 18, pad_l: int = 0, pad_r: int = 0) -> list[str]:
+    """Card shell shared by every panel, including the drifting wash.
+
+    pad_l/pad_r leave transparent margin inside the image. Gutters between
+    side-by-side panels have to be drawn, not spaced: whitespace between two
+    images in a README is unpredictable, and any of it pushes a pair past the
+    column width and drops the second one onto its own line. With the gutter
+    inside the image, every row spans exactly the same width and the edges of
+    every panel line up down the page.
+
+    Coordinates passed by callers are relative to the card, not the image.
+    """
     ws = t["wash"]
-    W = w
+    W = w - pad_l - pad_r
     o = [
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{h}" '
-        f'viewBox="0 0 {W} {h}" role="img" aria-label="{esc(label)}">',
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" '
+        f'viewBox="0 0 {w} {h}" role="img" aria-label="{esc(label)}">',
         "<defs>",
         f'<clipPath id="cc"><rect x="1" y="1" width="{W-2}" height="{h-2}" rx="{rx-1}"/></clipPath>',
         f'<linearGradient id="eg" x1="0" y1="0" x2="1" y2="1">'
@@ -181,6 +195,7 @@ def head(t: dict, h: int, label: str, extra_css: str = "",
         f".tag{{font:600 8.5px {MONO};letter-spacing:.1em}}"
         "@media (prefers-reduced-motion:reduce){*{animation:none!important}}"
         + extra_css + "</style>",
+        f'<g transform="translate({pad_l},0)">',
         f'<rect width="{W}" height="{h}" rx="{rx}" fill="{t["bg"]}"/>',
         '<g clip-path="url(#cc)">',
         f'<rect x="1" y="1" width="{W-2}" height="{h-2}" fill="{t["card"]}"/>',
@@ -247,7 +262,7 @@ def research(t: dict) -> str:
         a(f'<rect class="rf{i}" x="{tx}" y="{y-2:.0f}" width="{seg*stage:.0f}" '
           f'height="7" rx="3.5" fill="#FFFFFF" opacity="0"/>')
         a("</g>")
-    a("</svg>")
+    a("</g></svg>")
     return "".join(o)
 
 
@@ -294,7 +309,7 @@ def toolchain(t: dict) -> str:
         a(f'<g class="tw{i}">'
           f'<circle cx="{mid+12:.0f}" cy="{y-4:.0f}" r="2.6" fill="{t["wet"]}"/>'
           f'<text class="m" x="{mid+24:.0f}" y="{y:.0f}">{esc(s)}</text></g>')
-    a("</svg>")
+    a("</g></svg>")
     return "".join(o)
 
 
@@ -306,15 +321,17 @@ def code_head(t: dict, shown: int) -> str:
     a('<text class="t" x="30" y="34">CODE</text>')
     a(f'<text class="s" x="30" y="54">every computational manuscript ships with a '
       f'public repository &#183; {shown} most recently pushed</text>')
-    a("</svg>")
+    a("</g></svg>")
     return "".join(o)
 
 
-# The profile README column is 831px at its widest, and the whitespace between
-# two inline images costs about 4.5px more. Two tiles have to fit inside that
-# or each drops onto its own line and the grid becomes a single column.
-COLUMN = 831
-TILE_W, TILE_H = 408, 62
+# A profile README column is 831px at its widest. Every row on the page spans
+# exactly COLUMN, so a tile pair, a chip row and a full-width panel all share
+# the same left and right edge. Slots divide COLUMN evenly; the gutter is
+# drawn inside each slot rather than spaced between images.
+COLUMN = 828                       # divides by both 2 and 4
+TILE_W, TILE_H = COLUMN // 2, 62   # 414
+TILE_GUTTER = 10
 
 
 def repo_tile(t: dict, r: dict, i: int) -> str:
@@ -328,18 +345,24 @@ def repo_tile(t: dict, r: dict, i: int) -> str:
            "%.1f%%,100%%{opacity:0}}"
            % (i, i * 3.0, i * 3.0 + 2.5, i * 3.0 + 15.0),
            ".gl%d{animation:glow%d 14s ease-in-out infinite}" % (i, i)]
-    o = head(t, TILE_H, r["name"], "".join(css), w=TILE_W, rx=12)
+    # Left column carries the gutter on its right, right column on its left,
+    # so the pair butts up to exactly COLUMN with a clean gap down the middle.
+    half = TILE_GUTTER // 2
+    pl, pr = (0, half) if i % 2 == 0 else (half, 0)
+    cw = TILE_W - pl - pr
+    o = head(t, TILE_H, r["name"], "".join(css), w=TILE_W, rx=12,
+             pad_l=pl, pad_r=pr)
     a = o.append
     desc = r.get("desc") or DESC_FALLBACK.get(r["name"], "")
     if len(desc) > 50:
         desc = desc[:49].rstrip() + "…"
     dot = LANG_DOT.get(r.get("lang", ""), t["faint"])
-    a(f'<rect class="gl{i}" x="1" y="1" width="{TILE_W-2}" height="{TILE_H-2}" rx="11" '
+    a(f'<rect class="gl{i}" x="1" y="1" width="{cw-2}" height="{TILE_H-2}" rx="11" '
       f'fill="none" stroke="{t["dry"]}" stroke-width="1.2" opacity="0"/>')
     a(f'<circle cx="22" cy="27" r="3.4" fill="{dot}"/>')
     a(f'<text class="b" x="34" y="31">{esc(r["name"])}</text>')
     a(f'<text class="s" x="34" y="47">{esc(desc)}</text>')
-    a("</svg>")
+    a("</g></svg>")
     return "".join(o)
 
 
@@ -361,7 +384,7 @@ def code_all(t: dict, total: int) -> str:
       f'<text class="tag" x="{cx+13:.0f}" y="{cy+14}" fill="{t["dry"]}">{lbl}</text>'
       f'<text class="tag ar" x="{cx+cwid-19:.0f}" y="{cy+14}" '
       f'fill="{t["dry"]}">&#8594;</text>')
-    a("</svg>")
+    a("</g></svg>")
     return "".join(o)
 
 
@@ -420,13 +443,13 @@ def code(t: dict, repos: list | None = None, total: int | None = None) -> str:
       f'<text class="tag" x="{cxx+13:.0f}" y="{cyy+14}" fill="{t["dry"]}">{lbl}</text>'
       f'<text class="tag ar" x="{cxx+cwid-19:.0f}" y="{cyy+14}" '
       f'fill="{t["dry"]}">&#8594;</text></g>')
-    a("</svg>")
+    a("</g></svg>")
     return "".join(o)
 
 
 # ══════════════════════════════════════════════════════════════════════════
-# Same arithmetic as the tiles, four across: 4 x 200 plus three gaps fits 831.
-CHIP_W, CHIP_H = 200, 72
+CHIP_W, CHIP_H = COLUMN // 4, 72   # 207
+CHIP_GUTTER = 8
 
 
 def link_chip(t: dict, label: str, val: str, i: int) -> str:
@@ -436,9 +459,15 @@ def link_chip(t: dict, label: str, val: str, i: int) -> str:
            "100%{transform:translateX(100%)}}",
            ".sw{animation:slide 7s linear infinite;animation-delay:-%.2fs}"
            % (i * 1.75)]
-    o = head(t, CHIP_H, f"{label}: {val}", "".join(css), w=CHIP_W, rx=12)
+    # Four equal cards with three equal gutters, the whole row spanning COLUMN:
+    # card k sits at k*(card+gutter), and its slot starts at k*CHIP_W.
+    card = (COLUMN - 3 * CHIP_GUTTER) // 4
+    pl = i * (card + CHIP_GUTTER) - i * CHIP_W
+    pr = CHIP_W - pl - card
+    o = head(t, CHIP_H, f"{label}: {val}", "".join(css), w=CHIP_W, rx=12,
+             pad_l=pl, pad_r=pr)
     a = o.append
-    rw = CHIP_W - 32
+    rw = card - 32
     a(f'<defs><clipPath id="rule"><rect x="16" y="20" width="{rw}" height="2" '
       f'rx="1"/></clipPath>'
       f'<linearGradient id="sg" x1="0" y1="0" x2="1" y2="0">'
@@ -451,7 +480,7 @@ def link_chip(t: dict, label: str, val: str, i: int) -> str:
       f'height="2" fill="url(#sg)"/></g>')
     a(f'<text class="tag" x="16" y="42" fill="{t["faint"]}">{label}</text>')
     a(f'<text class="m" x="16" y="60">{esc(val)}</text>')
-    a("</svg>")
+    a("</g></svg>")
     return "".join(o)
 
 
@@ -471,11 +500,15 @@ README = """<!-- Generated by panels.py. Edit the generator, not this file: ever
      that is not already inside an <a> to the raw file in the repo, so an
      unwrapped panel opens as a still SVG when you click it. -->
 
-<a href="https://{user}.github.io/cv/"><img alt="Kartic - AI protein design to expression and in vitro validation" src="./dist/header-dark.svg" width="880"></a>
+<a href="https://{user}.github.io/cv/"><img alt="Kartic - AI protein design to expression and in vitro validation" src="./dist/header-dark.svg" width="{col}"></a>
 
-<a href="https://github.com/{user}?tab=repositories"><img alt="Repositories, most recently pushed first; all {total} behind the link" src="./dist/code-dark.svg" width="880"></a>
+<a href="https://github.com/{user}?tab=repositories"><img alt="Code" src="./dist/code-head-dark.svg" width="{col}"></a>
 
-<a href="https://github.com/{user}/{user}"><img alt="Contribution calendar as an arcade shooter: empty days destroyed, contribution pattern revealed" src="./dist/shooter-dark.svg" width="880"></a>
+{tiles}
+
+<a href="https://github.com/{user}?tab=repositories"><img alt="All {total} repositories" src="./dist/code-all-dark.svg" width="{col}"></a>
+
+<a href="https://github.com/{user}/{user}"><img alt="Contribution calendar as an arcade shooter: empty days destroyed, contribution pattern revealed" src="./dist/shooter-dark.svg" width="{col}"></a>
 
 {links}
 
@@ -490,12 +523,16 @@ README = """<!-- Generated by panels.py. Edit the generator, not this file: ever
     shooter.py    contribution calendar as an arcade shooter
     preview.py    stacks every panel into one page for review
 
-  The repository cards are one framed panel, so the whole panel links to one
-  place: the repositories tab. An SVG served through <img> cannot carry links
-  of its own, and GitHub's sanitiser drops inline <svg>, <object> and image
-  maps, so per-card links would mean one image per card and no shared frame.
-  code_head(), repo_tile() and code_all() in panels.py still build that
-  version if the trade is ever worth making the other way round.
+  Each repository is its own image inside its own <a>. That is not a style
+  choice: an SVG served through <img> cannot carry links, and GitHub's
+  sanitiser drops inline <svg>, <object> and image maps, so one card per file
+  is the only way each card can point somewhere different. code() in
+  panels.py still builds the single-framed-panel version, which looks better
+  but sends every card to the same place.
+
+  Every row spans the same width, and gutters are drawn inside the images
+  rather than spaced between them, so nothing depends on how wide a browser
+  renders the whitespace between two inline images.
 
   Cut from the page but still in the source, each one line from returning:
   structure.py (de novo design cascade), and research() and toolchain() in
@@ -538,30 +575,48 @@ def main() -> int:
     if blank:
         print("!! no description on GitHub and no fallback: " + ", ".join(blank))
 
-    # Leftovers from the tiled layout: nothing points at them any more, and a
-    # stale repo-N tile would outlive the repository it was named for.
+    # A stale repo-N tile would outlive the repository it was named for, and
+    # the single-panel code-*.svg is no longer referenced by anything.
     for f in os.listdir(args.outdir):
-        if f.startswith(("repo-", "code-head-", "code-all-")) and f.endswith(".svg"):
+        if f.startswith("repo-") and f.endswith(".svg"):
+            os.remove(os.path.join(args.outdir, f))
+        elif f in ("code-dark.svg", "code-light.svg"):
             os.remove(os.path.join(args.outdir, f))
 
     n = 0
     for theme in ("dark", "light"):
         t = THEMES[theme]
-        write(os.path.join(args.outdir, f"code-{theme}.svg"),
-              code(t, pinned, total))
+        write(os.path.join(args.outdir, f"code-head-{theme}.svg"),
+              code_head(t, len(pinned)))
+        write(os.path.join(args.outdir, f"code-all-{theme}.svg"),
+              code_all(t, total))
+        for i, r in enumerate(pinned):
+            write(os.path.join(args.outdir, f"repo-{i}-{theme}.svg"),
+                  repo_tile(t, r, i))
         for i, (key, label, val, _) in enumerate(LINKS):
             write(os.path.join(args.outdir, f"link-{key}-{theme}.svg"),
                   link_chip(t, label, val, i))
-        n += 1 + len(LINKS)
+        n += 2 + len(pinned) + len(LINKS)
     print(f"wrote {n} panel files to {args.outdir}/")
 
-    links = " ".join(
+    # Two tiles a line, and no whitespace between the two <a> tags: a newline
+    # there would render as a space and push the pair past the column.
+    cells = []
+    for i, r in enumerate(pinned):
+        name = r["name"]
+        href = REPO_LINK.get(name, f"https://github.com/{args.user}/{name}")
+        cells.append(f'<a href="{href}"><img alt="{esc(name)}" '
+                     f'src="./dist/repo-{i}-dark.svg" width="{TILE_W}"></a>')
+    rows = ["".join(cells[i:i + 2]) for i in range(0, len(cells), 2)]
+    # No whitespace between chips either: the gutters are drawn inside them.
+    links = "".join(
         f'<a href="{href}"><img alt="{label}: {esc(val)}" '
         f'src="./dist/link-{key}-dark.svg" width="{CHIP_W}"></a>'
         for key, label, val, href in LINKS)
 
     with open(args.readme, "w", encoding="utf-8") as fh:
-        fh.write(README.format(user=args.user, total=total, links=links))
+        fh.write(README.format(user=args.user, total=total, col=COLUMN,
+                               tiles="\n".join(rows), links=links))
     print(f"wrote {args.readme}  ({len(pinned)} cards, {len(LINKS)} contact chips)")
     return 0
 
