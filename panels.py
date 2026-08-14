@@ -142,8 +142,12 @@ LINKS = [
     ("cv", "CV", "kartic03.github.io/cv", "https://kartic03.github.io/cv/"),
     ("orcid", "ORCID", "0009-0005-5939-4192",
      "https://orcid.org/0009-0005-5939-4192"),
+    # Gmail's compose window rather than mailto:, which depends on the visitor
+    # having a desktop mail client configured and often does nothing at all.
+    # &amp; because this goes straight into an href attribute.
     ("email", "EMAIL", "karticmishra03@gmail.com",
-     "mailto:karticmishra03@gmail.com"),
+     "https://mail.google.com/mail/?view=cm&amp;fs=1"
+     "&amp;to=karticmishra03@gmail.com"),
     ("github", "GITHUB", "github.com/kartic03", "https://github.com/kartic03"),
 ]
 
