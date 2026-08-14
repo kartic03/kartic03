@@ -24,10 +24,10 @@ USER = "kartic03"
 # on their own line, tiles and chips flowing two and four to a row.
 ROWS = [
     ["header"],
+    ["shooter"],
     ["code-head"],
     "TILES",                       # expands to repo-0 .. repo-N
     ["code-all"],
-    ["shooter"],
     ["link-cv", "link-orcid", "link-email", "link-github"],
 ]
 

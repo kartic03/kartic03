@@ -23,6 +23,8 @@
 
 <a href="#kartic03-profile"><img alt="Kartic - AI protein design to expression and in vitro validation" src="./dist/header-dark.svg" width="828"></a>
 
+<a href="#kartic03-profile"><img alt="Contribution calendar as an arcade shooter: empty days destroyed, contribution pattern revealed" src="./dist/shooter-dark.svg" width="828"></a>
+
 <a href="https://github.com/kartic03?tab=repositories" target="_blank" rel="noopener noreferrer"><img alt="Code" src="./dist/code-head-dark.svg" width="828"></a>
 
 <a href="https://kartic03.github.io/cv/" target="_blank" rel="noopener noreferrer"><img alt="cv" src="./dist/repo-0-dark.svg" width="414"></a><a href="https://github.com/kartic03/ppmi-csf-cognitive-decline" target="_blank" rel="noopener noreferrer"><img alt="ppmi-csf-cognitive-decline" src="./dist/repo-1-dark.svg" width="414"></a>
@@ -31,8 +33,6 @@
 <a href="https://github.com/kartic03/BBB-Trans-AI" target="_blank" rel="noopener noreferrer"><img alt="BBB-Trans-AI" src="./dist/repo-6-dark.svg" width="414"></a><a href="https://github.com/kartic03/DBS-BBB-Multimodal-Fusion" target="_blank" rel="noopener noreferrer"><img alt="DBS-BBB-Multimodal-Fusion" src="./dist/repo-7-dark.svg" width="414"></a>
 
 <a href="https://github.com/kartic03?tab=repositories" target="_blank" rel="noopener noreferrer"><img alt="All 8 repositories" src="./dist/code-all-dark.svg" width="828"></a>
-
-<a href="#kartic03-profile"><img alt="Contribution calendar as an arcade shooter: empty days destroyed, contribution pattern revealed" src="./dist/shooter-dark.svg" width="828"></a>
 
 <a href="https://kartic03.github.io/cv/" target="_blank" rel="noopener noreferrer"><img alt="CV: kartic03.github.io/cv" src="./dist/link-cv-dark.svg" width="207"></a><a href="https://orcid.org/0009-0005-5939-4192" target="_blank" rel="noopener noreferrer"><img alt="ORCID: 0009-0005-5939-4192" src="./dist/link-orcid-dark.svg" width="207"></a><a href="https://mail.google.com/mail/u/0/?fs=1&amp;tf=cm&amp;to=karticmishra03@gmail.com" target="_blank" rel="noopener noreferrer"><img alt="EMAIL: karticmishra03@gmail.com" src="./dist/link-email-dark.svg" width="207"></a><a href="https://github.com/kartic03" target="_blank" rel="noopener noreferrer"><img alt="GITHUB: github.com/kartic03" src="./dist/link-github-dark.svg" width="207"></a>
 
