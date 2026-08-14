@@ -1,30 +1,19 @@
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./dist/header-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="./dist/header-light.svg">
-  <img alt="Kartic — wet lab and computation, de novo peptide design" src="./dist/header-dark.svg" width="880">
-</picture>
+<!-- Dark is forced. There is deliberately no <picture>/prefers-color-scheme
+     switch here: the panels are designed as dark cards, and on a light GitHub
+     theme they read as intentional. The light SVGs are still generated and the
+     preview page can still toggle to them. -->
+
+<img alt="Kartic — AI protein design to expression and in vitro validation" src="./dist/header-dark.svg" width="880">
 
 <!-- An SVG served through <img> cannot carry links of its own, so the panel is
      wrapped instead: the "all N repositories" chip is what marks it clickable. -->
 <a href="https://github.com/kartic03?tab=repositories">
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./dist/code-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="./dist/code-light.svg">
-  <img alt="Eight most recently pushed repositories; click through for all of them" src="./dist/code-dark.svg" width="880">
-</picture>
+<img alt="Eight most recently pushed repositories; click through for all of them" src="./dist/code-dark.svg" width="880">
 </a>
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./dist/shooter-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="./dist/shooter-light.svg">
-  <img alt="Contribution calendar as an arcade shooter: empty days destroyed, contribution pattern revealed" src="./dist/shooter-dark.svg" width="880">
-</picture>
+<img alt="Contribution calendar as an arcade shooter: empty days destroyed, contribution pattern revealed" src="./dist/shooter-dark.svg" width="880">
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./dist/footer-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="./dist/footer-light.svg">
-  <img alt="Contact" src="./dist/footer-dark.svg" width="880">
-</picture>
+<img alt="Contact" src="./dist/footer-dark.svg" width="880">
 
 <!--
   Every panel is generated, not hand-drawn.
