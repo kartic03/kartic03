@@ -11,7 +11,12 @@
      unwrapped panel opens as a still SVG when you click it. An <a> with no
      href does not work: the sanitiser strips it and the auto-link returns.
      So the header points at this profile - the page it is already on - which
-     is the closest thing to a panel that does not go anywhere. -->
+     is the closest thing to a panel that does not go anywhere.
+
+     The target="_blank" below is stripped by GitHub's sanitiser, so links
+     open in the same tab here whatever this file says. It is kept because it
+     is the correct intent and it does work in dist/page.html and in any
+     other renderer. Ctrl-click or middle-click for a new tab on GitHub. -->
 
 <a href="https://github.com/kartic03"><img alt="Kartic - AI protein design to expression and in vitro validation" src="./dist/header-dark.svg" width="828"></a>
 
