@@ -1,0 +1,10 @@
+[
+ {"name": "cv", "desc": "", "lang": "HTML"},
+ {"name": "ppmi-csf-cognitive-decline", "desc": "", "lang": "Python"},
+ {"name": "Toxbench", "desc": "", "lang": "Python"},
+ {"name": "eeg-fm-shortcut-audit", "desc": "Preregistered, equivalence-tested protocol for auditing acquisition shortcuts in frozen EEG foundation models. Code only; gated clinical data not redistributed.", "lang": "Python"},
+ {"name": "DBS-Candidacy-Screening", "desc": "", "lang": "Python"},
+ {"name": "RATAN-PBind", "desc": "Residue Attribution and Target Affinity Network for Protein Binding", "lang": "Python"},
+ {"name": "BBB-Trans-AI", "desc": "", "lang": "Jupyter Notebook"},
+ {"name": "DBS-BBB-Multimodal-Fusion", "desc": "", "lang": "Python"}
+]
