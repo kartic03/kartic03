@@ -24,15 +24,13 @@ USER = "kartic03"
 # on their own line, tiles and chips flowing two and four to a row.
 ROWS = [
     ["header"],
-    ["code-head"],
-    "TILES",                       # expands to repo-0 .. repo-N, 434px each
-    ["code-all"],
+    ["code"],
     ["shooter"],
     ["link-cv", "link-orcid", "link-email", "link-github"],
 ]
 
 LINK = {
-    "code-all": f"https://github.com/{USER}?tab=repositories",
+    "code": f"https://github.com/{USER}?tab=repositories",
     "link-cv": f"https://{USER}.github.io/cv/",
     "link-orcid": "https://orcid.org/0009-0005-5939-4192",
     "link-email": "mailto:karticmishra03@gmail.com",
@@ -150,21 +148,7 @@ def main() -> int:
     ap.add_argument("--out", default="dist/page.html")
     args = ap.parse_args()
 
-    tiles = sorted(
-        (f[:-9] for f in os.listdir(args.dir)
-         if f.startswith("repo-") and f.endswith("-dark.svg")),
-        key=lambda s: int(s.split("-")[1]))
-    repo_href = {}
-    if os.path.exists(REPO_CACHE):
-        names = [r["name"] for r in json.load(open(REPO_CACHE, encoding="utf-8"))
-                 if r["name"].lower() != USER.lower()]
-        for i, name in enumerate(names[:len(tiles)]):
-            repo_href[f"repo-{i}"] = f"https://github.com/{USER}/{name}"
-
-    rows: list[list[str]] = []
-    for row in ROWS:
-        rows.append(tiles if row == "TILES" else row)
-
+    rows = ROWS
     dark, light, present = {}, {}, []
     for row in rows:
         for n in row:
@@ -189,7 +173,7 @@ def main() -> int:
             w = next((v for p, v in WIDTH.items() if n.startswith(p)), 880)
             tag = (f'<img id="p{idx[n]}" alt="{n}" src="{dark[n]}" '
                    f'style="width:{w}px">')
-            href = LINK.get(n) or repo_href.get(n)
+            href = LINK.get(n)
             if href:
                 tag = (f'<a class="panel" href="{href}" target="_blank" '
                        f'rel="noopener">{tag}</a>')

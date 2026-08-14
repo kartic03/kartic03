@@ -8,14 +8,7 @@
 
 <img alt="Kartic - AI protein design to expression and in vitro validation" src="./dist/header-dark.svg" width="880">
 
-<img alt="Code" src="./dist/code-head-dark.svg" width="880">
-
-<a href="https://github.com/kartic03/cv"><img alt="cv" src="./dist/repo-0-dark.svg" width="408"></a> <a href="https://github.com/kartic03/ppmi-csf-cognitive-decline"><img alt="ppmi-csf-cognitive-decline" src="./dist/repo-1-dark.svg" width="408"></a>
-<a href="https://github.com/kartic03/Toxbench"><img alt="Toxbench" src="./dist/repo-2-dark.svg" width="408"></a> <a href="https://github.com/kartic03/eeg-fm-shortcut-audit"><img alt="eeg-fm-shortcut-audit" src="./dist/repo-3-dark.svg" width="408"></a>
-<a href="https://github.com/kartic03/DBS-Candidacy-Screening"><img alt="DBS-Candidacy-Screening" src="./dist/repo-4-dark.svg" width="408"></a> <a href="https://github.com/kartic03/RATAN-PBind"><img alt="RATAN-PBind" src="./dist/repo-5-dark.svg" width="408"></a>
-<a href="https://github.com/kartic03/BBB-Trans-AI"><img alt="BBB-Trans-AI" src="./dist/repo-6-dark.svg" width="408"></a> <a href="https://github.com/kartic03/DBS-BBB-Multimodal-Fusion"><img alt="DBS-BBB-Multimodal-Fusion" src="./dist/repo-7-dark.svg" width="408"></a>
-
-<a href="https://github.com/kartic03?tab=repositories"><img alt="All 8 repositories" src="./dist/code-all-dark.svg" width="880"></a>
+<a href="https://github.com/kartic03?tab=repositories"><img alt="Repositories, most recently pushed first; all 8 behind the link" src="./dist/code-dark.svg" width="880"></a>
 
 <img alt="Contribution calendar as an arcade shooter: empty days destroyed, contribution pattern revealed" src="./dist/shooter-dark.svg" width="880">
 
@@ -32,14 +25,16 @@
     shooter.py    contribution calendar as an arcade shooter
     preview.py    stacks every panel into one page for review
 
-  Each repository is a separate image inside its own <a>. That is not a style
-  choice: an SVG served through <img> cannot carry links, and GitHub's
-  sanitiser drops inline <svg>, <object> and image maps, so one card per file
-  is the only way each tile can point at a different place.
+  The repository cards are one framed panel, so the whole panel links to one
+  place: the repositories tab. An SVG served through <img> cannot carry links
+  of its own, and GitHub's sanitiser drops inline <svg>, <object> and image
+  maps, so per-card links would mean one image per card and no shared frame.
+  code_head(), repo_tile() and code_all() in panels.py still build that
+  version if the trade is ever worth making the other way round.
 
   Cut from the page but still in the source, each one line from returning:
-  structure.py (de novo design cascade), and research(), toolchain() and the
-  single-image code() in panels.py.
+  structure.py (de novo design cascade), and research() and toolchain() in
+  panels.py.
 
   Regenerate everything:   python build.py
   Rebuild one panel:       python shooter.py --user kartic03
