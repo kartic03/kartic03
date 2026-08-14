@@ -4,11 +4,15 @@
   <img alt="Kartic — wet lab and computation, de novo peptide design" src="./dist/header-dark.svg" width="880">
 </picture>
 
+<!-- An SVG served through <img> cannot carry links of its own, so the panel is
+     wrapped instead: the "all N repositories" chip is what marks it clickable. -->
+<a href="https://github.com/kartic03?tab=repositories">
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./dist/code-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="./dist/code-light.svg">
-  <img alt="Repositories, each backing a manuscript" src="./dist/code-dark.svg" width="880">
+  <img alt="Eight most recently pushed repositories; click through for all of them" src="./dist/code-dark.svg" width="880">
 </picture>
+</a>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./dist/shooter-dark.svg">
