@@ -32,7 +32,7 @@ ROWS = [
 ]
 
 LINK = {
-    "header": f"https://{USER}.github.io/cv/",
+    # No "header" entry: the profile card deliberately does not navigate.
     "shooter": f"https://github.com/{USER}/{USER}",
     "code-head": f"https://github.com/{USER}?tab=repositories",
     "code-all": f"https://github.com/{USER}?tab=repositories",
