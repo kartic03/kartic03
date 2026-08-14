@@ -18,7 +18,12 @@ from __future__ import annotations
 
 import argparse
 import html
+import json
 import os
+import urllib.request
+
+API = "https://api.github.com"
+REPO_CACHE = "dist/.repo-cache.json"
 
 W = 880
 STAGES = ["submitted", "under review", "revision", "in press", "published"]
@@ -70,16 +75,62 @@ TOOLS_WET = [
     "expression, affinity chromatography",
 ]
 
-REPOS = [
-    ("RATAN-PBind", "Target-aware nomination of de novo binders", "dry"),
-    ("ToxBench", "Leakage-audited toxicology benchmark", "dry"),
-    ("eeg-fm-shortcut-audit", "Preregistered EEG foundation-model audit", "dry"),
-    ("BBB-Trans-AI", "Sequence-structure BBB peptide prediction", "dry"),
-    ("ppmi-csf-cognitive-decline", "CSF markers in the PPMI cohort", "dry"),
-    ("DBS-Candidacy-Screening", "Explainable DBS status prediction", "dry"),
-    ("DBS-BBB-Multimodal-Fusion", "Wearable, gait and voice fusion", "dry"),
-    ("cv", "Curriculum vitae as a live web page", "dry"),
-]
+# Most of these repositories have no description set on GitHub, so the panel
+# would render blank rows. These fill the gap and are used only when GitHub
+# returns nothing; set a real description on the repo and it wins automatically.
+DESC_FALLBACK = {
+    "RATAN-PBind": "Target-aware nomination of de novo binders",
+    "Toxbench": "Leakage-audited toxicology benchmark",
+    "ToxBench": "Leakage-audited toxicology benchmark",
+    "eeg-fm-shortcut-audit": "Preregistered EEG foundation-model audit",
+    "BBB-Trans-AI": "Sequence-structure BBB peptide prediction",
+    "ppmi-csf-cognitive-decline": "CSF markers in the PPMI cohort",
+    "DBS-Candidacy-Screening": "Explainable DBS status prediction",
+    "DBS-BBB-Multimodal-Fusion": "Wearable, gait and voice fusion",
+    "cv": "Curriculum vitae as a live web page",
+    "kartic03": "This profile, generated",
+}
+
+LANG_DOT = {
+    "Python": "#3572A5", "Jupyter Notebook": "#DA5B0B", "HTML": "#E34C26",
+    "Shell": "#89E051", "R": "#198CE7", "JavaScript": "#F1E05A",
+    "TypeScript": "#3178C6", "C": "#555555", "C++": "#F34B7D",
+    "Java": "#B07219", "Rust": "#DEA584", "Go": "#00ADD8", "CSS": "#563D7C",
+}
+
+MAX_CARDS = 8
+
+
+def fetch_repos(user: str) -> list[dict]:
+    """Live repository list, newest activity first, cached against API failure.
+
+    Without this the code panel is a hardcoded list that goes stale the moment a
+    repository is added or renamed.
+    """
+    try:
+        hdrs = {"User-Agent": "profile-panels/1.0"}
+        tok = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
+        if tok:
+            hdrs["Authorization"] = f"Bearer {tok}"
+        req = urllib.request.Request(
+            f"{API}/users/{user}/repos?per_page=100&sort=pushed", headers=hdrs)
+        with urllib.request.urlopen(req, timeout=30) as r:
+            raw = json.loads(r.read().decode("utf-8"))
+        repos = [{"name": x["name"],
+                  "desc": (x.get("description") or "").strip(),
+                  "lang": x.get("language") or ""}
+                 for x in raw if not x.get("fork")]
+        if not repos:
+            raise RuntimeError("no repositories returned")
+        os.makedirs(os.path.dirname(REPO_CACHE) or ".", exist_ok=True)
+        with open(REPO_CACHE, "w", encoding="utf-8") as fh:
+            json.dump(repos, fh, indent=1)
+        return repos
+    except Exception as exc:                               # noqa: BLE001
+        if not os.path.exists(REPO_CACHE):
+            raise SystemExit(f"repo list failed and no cache: {exc}")
+        print(f"!! repo list failed ({exc}); using {REPO_CACHE}")
+        return json.load(open(REPO_CACHE, encoding="utf-8"))
 
 LINKS = [
     ("CV", "kartic03.github.io/cv"),
@@ -242,15 +293,16 @@ def toolchain(t: dict) -> str:
 
 
 # ══════════════════════════════════════════════════════════════════════════
-def code(t: dict) -> str:
+def code(t: dict, repos: list | None = None) -> str:
+    repos = (repos or [])[:MAX_CARDS]
     cols, cw, chh, gap = 2, 402, 54, 14
-    rows = (len(REPOS) + cols - 1) // cols
+    rows = (len(repos) + cols - 1) // cols
     top = 82
     h = top + rows * (chh + gap) + 16
     loop = 14.0
     css = []
     # cards stay put; only the border glow travels, so nothing is ever blank
-    for i in range(len(REPOS)):
+    for i in range(len(repos)):
         d = i * 0.42
         css.append("@keyframes cg%d{0%%,%.1f%%{opacity:0}%.1f%%{opacity:.95}"
                    "%.1f%%,100%%{opacity:0}}"
@@ -262,18 +314,22 @@ def code(t: dict) -> str:
     a = o.append
     a(f'<text class="t" x="30" y="38">CODE</text>')
     a(f'<text class="s" x="30" y="56">every computational manuscript ships with a '
-      f'public repository</text>')
+      f'public repository &#183; most recently pushed first</text>')
 
-    for i, (name, desc, ch) in enumerate(REPOS):
+    for i, r in enumerate(repos):
+        name = r["name"]
+        desc = r.get("desc") or DESC_FALLBACK.get(name, "")
+        if len(desc) > 46:
+            desc = desc[:45].rstrip() + "…"
+        dot = LANG_DOT.get(r.get("lang", ""), t["faint"])
         cx = 30 + (i % cols) * (cw + 16)
         cy = top + (i // cols) * (chh + gap)
-        col = t[ch]
         a('<g>')
         a(f'<rect x="{cx}" y="{cy}" width="{cw}" height="{chh}" rx="10" '
           f'fill="{t["sub"]}" stroke="{t["edge"]}" stroke-width="1"/>')
         a(f'<rect class="cg{i}" x="{cx}" y="{cy}" width="{cw}" height="{chh}" rx="10" '
-          f'fill="none" stroke="{col}" stroke-width="1.2" opacity="0"/>')
-        a(f'<circle cx="{cx+18}" cy="{cy+21}" r="3.4" fill="#3572A5"/>')
+          f'fill="none" stroke="{t["dry"]}" stroke-width="1.2" opacity="0"/>')
+        a(f'<circle cx="{cx+18}" cy="{cy+21}" r="3.4" fill="{dot}"/>')
         a(f'<text class="b" x="{cx+30}" y="{cy+25}">{esc(name)}</text>')
         a(f'<text class="s" x="{cx+30}" y="{cy+40}">{esc(desc)}</text>')
         a("</g>")
@@ -310,15 +366,28 @@ def footer(t: dict) -> str:
 
 # research() and toolchain() are kept but not generated: both panels were cut
 # from the page. Add either back here if it is ever wanted again.
-PANELS = {"code": code, "footer": footer}
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
+    ap.add_argument("--user", default="kartic03")
     ap.add_argument("--outdir", default="dist")
     args = ap.parse_args()
     os.makedirs(args.outdir, exist_ok=True)
-    for name, fn in PANELS.items():
+
+    repos = fetch_repos(args.user)
+    shown = min(len(repos), MAX_CARDS)
+    print(f"{len(repos)} repositories; showing {shown} newest-pushed")
+    if len(repos) > MAX_CARDS:
+        dropped = ", ".join(r["name"] for r in repos[MAX_CARDS:])
+        print(f"!! not shown ({len(repos) - MAX_CARDS}): {dropped}")
+    blank = [r["name"] for r in repos[:MAX_CARDS]
+             if not r["desc"] and r["name"] not in DESC_FALLBACK]
+    if blank:
+        print("!! no description on GitHub and no fallback: " + ", ".join(blank))
+
+    panels = {"code": lambda t: code(t, repos), "footer": footer}
+    for name, fn in panels.items():
         for theme in ("dark", "light"):
             svg = fn(THEMES[theme])
             p = os.path.join(args.outdir, f"{name}-{theme}.svg")
