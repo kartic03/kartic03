@@ -132,11 +132,15 @@ def fetch_repos(user: str) -> list[dict]:
         print(f"!! repo list failed ({exc}); using {REPO_CACHE}")
         return json.load(open(REPO_CACHE, encoding="utf-8"))
 
+# key, label, shown value, where it actually goes. Each becomes its own image,
+# because four destinations cannot live inside one <img>.
 LINKS = [
-    ("CV", "kartic03.github.io/cv"),
-    ("ORCID", "0009-0005-5939-4192"),
-    ("EMAIL", "karticmishra03@gmail.com"),
-    ("GITHUB", "github.com/kartic03"),
+    ("cv", "CV", "kartic03.github.io/cv", "https://kartic03.github.io/cv/"),
+    ("orcid", "ORCID", "0009-0005-5939-4192",
+     "https://orcid.org/0009-0005-5939-4192"),
+    ("email", "EMAIL", "karticmishra03@gmail.com",
+     "mailto:karticmishra03@gmail.com"),
+    ("github", "GITHUB", "github.com/kartic03", "https://github.com/kartic03"),
 ]
 
 MONO = "ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace"
@@ -146,14 +150,16 @@ def esc(s: str) -> str:
     return html.escape(s, quote=True)
 
 
-def head(t: dict, h: int, label: str, extra_css: str = "") -> list[str]:
+def head(t: dict, h: int, label: str, extra_css: str = "",
+         w: int = W, rx: int = 18) -> list[str]:
     """Card shell shared by every panel, including the drifting wash."""
     ws = t["wash"]
+    W = w
     o = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{h}" '
         f'viewBox="0 0 {W} {h}" role="img" aria-label="{esc(label)}">',
         "<defs>",
-        f'<clipPath id="cc"><rect x="1" y="1" width="{W-2}" height="{h-2}" rx="17"/></clipPath>',
+        f'<clipPath id="cc"><rect x="1" y="1" width="{W-2}" height="{h-2}" rx="{rx-1}"/></clipPath>',
         f'<linearGradient id="eg" x1="0" y1="0" x2="1" y2="1">'
         f'<stop offset="0" stop-color="{t["wet"]}" stop-opacity=".5"/>'
         f'<stop offset=".5" stop-color="{t["edge"]}" stop-opacity=".9"/>'
@@ -175,12 +181,12 @@ def head(t: dict, h: int, label: str, extra_css: str = "") -> list[str]:
         f".tag{{font:600 8.5px {MONO};letter-spacing:.1em}}"
         "@media (prefers-reduced-motion:reduce){*{animation:none!important}}"
         + extra_css + "</style>",
-        f'<rect width="{W}" height="{h}" rx="18" fill="{t["bg"]}"/>',
+        f'<rect width="{W}" height="{h}" rx="{rx}" fill="{t["bg"]}"/>',
         '<g clip-path="url(#cc)">',
         f'<rect x="1" y="1" width="{W-2}" height="{h-2}" fill="{t["card"]}"/>',
         f'<rect x="1" y="1" width="{W-2}" height="{h-2}" fill="url(#w1)"/>',
         "</g>",
-        f'<rect x="1" y="1" width="{W-2}" height="{h-2}" rx="17" fill="none" '
+        f'<rect x="1" y="1" width="{W-2}" height="{h-2}" rx="{rx-1}" fill="none" '
         f'stroke="url(#eg)" stroke-width="1.4"/>',
     ]
     return o
@@ -293,6 +299,68 @@ def toolchain(t: dict) -> str:
 
 
 # ══════════════════════════════════════════════════════════════════════════
+def code_head(t: dict, shown: int) -> str:
+    """Eyebrow strip above the repository tiles."""
+    o = head(t, 76, "Repositories")
+    a = o.append
+    a('<text class="t" x="30" y="34">CODE</text>')
+    a(f'<text class="s" x="30" y="54">every computational manuscript ships with a '
+      f'public repository &#183; {shown} most recently pushed</text>')
+    a("</svg>")
+    return "".join(o)
+
+
+TILE_W, TILE_H = 434, 62
+
+
+def repo_tile(t: dict, r: dict, i: int) -> str:
+    """One repository, as its own image so the README can link it to its repo.
+
+    An SVG served through <img> cannot carry a link, and GitHub's sanitiser
+    drops inline <svg>, <object> and image maps alike. One card per file is the
+    only way each repository can point somewhere different.
+    """
+    css = ["@keyframes glow%d{0%%,%.1f%%{opacity:0}%.1f%%{opacity:.9}"
+           "%.1f%%,100%%{opacity:0}}"
+           % (i, i * 3.0, i * 3.0 + 2.5, i * 3.0 + 15.0),
+           ".gl%d{animation:glow%d 14s ease-in-out infinite}" % (i, i)]
+    o = head(t, TILE_H, r["name"], "".join(css), w=TILE_W, rx=12)
+    a = o.append
+    desc = r.get("desc") or DESC_FALLBACK.get(r["name"], "")
+    if len(desc) > 50:
+        desc = desc[:49].rstrip() + "…"
+    dot = LANG_DOT.get(r.get("lang", ""), t["faint"])
+    a(f'<rect class="gl{i}" x="1" y="1" width="{TILE_W-2}" height="{TILE_H-2}" rx="11" '
+      f'fill="none" stroke="{t["dry"]}" stroke-width="1.2" opacity="0"/>')
+    a(f'<circle cx="22" cy="27" r="3.4" fill="{dot}"/>')
+    a(f'<text class="b" x="34" y="31">{esc(r["name"])}</text>')
+    a(f'<text class="s" x="34" y="47">{esc(desc)}</text>')
+    a("</svg>")
+    return "".join(o)
+
+
+def code_all(t: dict, total: int) -> str:
+    """Closing strip under the tiles, linked to the full repositories tab."""
+    css = ["@keyframes arrow{0%,72%,100%{transform:translateX(0)}"
+           "82%{transform:translateX(3px)}}",
+           ".ar{animation:arrow 3.4s ease-in-out infinite;transform-box:fill-box}"]
+    h = 46
+    o = head(t, h, f"All {total} repositories", "".join(css))
+    a = o.append
+    a(f'<text class="tag" x="30" y="27" fill="{t["faint"]}">'
+      f'PINNED BY MOST RECENT PUSH</text>')
+    lbl = f"ALL {total} REPOSITORIES"
+    cwid = len(lbl) * 5.95 + 40
+    cx, cy, cht = W - 30 - cwid, 12, 22
+    a(f'<rect x="{cx:.0f}" y="{cy}" width="{cwid:.0f}" height="{cht}" rx="11" '
+      f'fill="{t["sub"]}" stroke="{t["edge"]}" stroke-width="1"/>'
+      f'<text class="tag" x="{cx+13:.0f}" y="{cy+14}" fill="{t["dry"]}">{lbl}</text>'
+      f'<text class="tag ar" x="{cx+cwid-19:.0f}" y="{cy+14}" '
+      f'fill="{t["dry"]}">&#8594;</text>')
+    a("</svg>")
+    return "".join(o)
+
+
 def code(t: dict, repos: list | None = None, total: int | None = None) -> str:
     total = len(repos or []) if total is None else total
     repos = (repos or [])[:MAX_CARDS]
@@ -353,28 +421,33 @@ def code(t: dict, repos: list | None = None, total: int | None = None) -> str:
 
 
 # ══════════════════════════════════════════════════════════════════════════
-def footer(t: dict) -> str:
-    h = 96
+# 4 x 211 leaves room for the gaps between them inside the 880 the other
+# panels occupy; at 214 the fourth chip wraps to its own line.
+CHIP_W, CHIP_H = 211, 72
+
+
+def link_chip(t: dict, label: str, val: str, i: int) -> str:
+    """One contact link. The travelling rule that used to run the width of the
+    footer now sits inside each chip, offset so the four still read as a set."""
     css = ["@keyframes slide{0%{transform:translateX(-100%)}"
            "100%{transform:translateX(100%)}}",
-           ".sw{animation:slide 7s linear infinite}"]
-    o = head(t, h, "Contact", "".join(css))
+           ".sw{animation:slide 7s linear infinite;animation-delay:-%.2fs}"
+           % (i * 1.75)]
+    o = head(t, CHIP_H, f"{label}: {val}", "".join(css), w=CHIP_W, rx=12)
     a = o.append
-    a(f'<defs><clipPath id="rule"><rect x="30" y="30" width="{W-60}" height="2" '
+    rw = CHIP_W - 32
+    a(f'<defs><clipPath id="rule"><rect x="16" y="20" width="{rw}" height="2" '
       f'rx="1"/></clipPath>'
       f'<linearGradient id="sg" x1="0" y1="0" x2="1" y2="0">'
       f'<stop offset="0" stop-color="{t["wet"]}" stop-opacity="0"/>'
       f'<stop offset=".5" stop-color="{t["dry"]}"/>'
       f'<stop offset="1" stop-color="{t["wet"]}" stop-opacity="0"/>'
       f'</linearGradient></defs>')
-    a(f'<rect x="30" y="30" width="{W-60}" height="2" rx="1" fill="{t["track"]}"/>')
-    a(f'<g clip-path="url(#rule)"><rect class="sw" x="30" y="30" width="{W-60}" '
+    a(f'<rect x="16" y="20" width="{rw}" height="2" rx="1" fill="{t["track"]}"/>')
+    a(f'<g clip-path="url(#rule)"><rect class="sw" x="16" y="20" width="{rw}" '
       f'height="2" fill="url(#sg)"/></g>')
-    x = 30
-    for label, val in LINKS:
-        a(f'<text class="tag" x="{x}" y="{60}" fill="{t["faint"]}">{label}</text>')
-        a(f'<text class="m" x="{x}" y="{76}">{esc(val)}</text>')
-        x += max(len(val) * 6.4 + 34, 150)
+    a(f'<text class="tag" x="16" y="42" fill="{t["faint"]}">{label}</text>')
+    a(f'<text class="m" x="16" y="60">{esc(val)}</text>')
     a("</svg>")
     return "".join(o)
 
@@ -383,32 +456,122 @@ def footer(t: dict) -> str:
 # from the page. Add either back here if it is ever wanted again.
 
 
+README = """<!-- Generated by panels.py. Edit the generator, not this file: every
+     build overwrites it, because the repository tiles and their links come
+     from the live repository list.
+
+     Dark is forced. There is no <picture>/prefers-color-scheme switch: the
+     panels are designed as dark cards and read as intentional on a light
+     GitHub theme. The light SVGs are still generated for the preview page. -->
+
+<img alt="Kartic - AI protein design to expression and in vitro validation" src="./dist/header-dark.svg" width="880">
+
+<img alt="Code" src="./dist/code-head-dark.svg" width="880">
+
+{tiles}
+
+<a href="https://github.com/{user}?tab=repositories"><img alt="All {total} repositories" src="./dist/code-all-dark.svg" width="880"></a>
+
+<img alt="Contribution calendar as an arcade shooter: empty days destroyed, contribution pattern revealed" src="./dist/shooter-dark.svg" width="880">
+
+{links}
+
+<!--
+  Every panel is generated, not hand-drawn.
+
+    header.py     profile card; language shares come from the GitHub API and
+                  the avatar is inlined as a data URI, because an SVG that
+                  references an external image renders empty once GitHub
+                  proxies it through Camo
+    panels.py     repository tiles, contact chips, and this README
+    shooter.py    contribution calendar as an arcade shooter
+    preview.py    stacks every panel into one page for review
+
+  Each repository is a separate image inside its own <a>. That is not a style
+  choice: an SVG served through <img> cannot carry links, and GitHub's
+  sanitiser drops inline <svg>, <object> and image maps, so one card per file
+  is the only way each tile can point at a different place.
+
+  Cut from the page but still in the source, each one line from returning:
+  structure.py (de novo design cascade), and research(), toolchain() and the
+  single-image code() in panels.py.
+
+  Regenerate everything:   python build.py
+  Rebuild one panel:       python shooter.py --user kartic03
+
+  .github/workflows/build.yml refreshes the data-driven panels daily.
+-->
+"""
+
+
+def write(path: str, svg: str) -> None:
+    with open(path, "w", encoding="utf-8") as fh:
+        fh.write(svg)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--user", default="kartic03")
     ap.add_argument("--outdir", default="dist")
+    ap.add_argument("--readme", default="README.md")
     args = ap.parse_args()
     os.makedirs(args.outdir, exist_ok=True)
 
     repos = fetch_repos(args.user)
+    # The profile repository is this README's own home. It is real work, but a
+    # tile linking to the page you are already looking at is noise, and it was
+    # costing a genuine repository its slot.
+    repos = [r for r in repos if r["name"].lower() != args.user.lower()]
     total = len(repos)
-    print(f"{total} repositories; pinning the {min(total, MAX_CARDS)} newest-pushed")
+    pinned = repos[:MAX_CARDS]
+    print(f"{total} repositories; pinning the {len(pinned)} newest-pushed")
     if total > MAX_CARDS:
         rest = ", ".join(r["name"] for r in repos[MAX_CARDS:])
         print(f"   behind the chip ({total - MAX_CARDS}): {rest}")
-    blank = [r["name"] for r in repos[:MAX_CARDS]
+    blank = [r["name"] for r in pinned
              if not r["desc"] and r["name"] not in DESC_FALLBACK]
     if blank:
         print("!! no description on GitHub and no fallback: " + ", ".join(blank))
 
-    panels = {"code": lambda t: code(t, repos, total), "footer": footer}
-    for name, fn in panels.items():
-        for theme in ("dark", "light"):
-            svg = fn(THEMES[theme])
-            p = os.path.join(args.outdir, f"{name}-{theme}.svg")
-            with open(p, "w", encoding="utf-8") as fh:
-                fh.write(svg)
-            print(f"wrote {p}  ({len(svg.encode('utf-8'))/1024:.1f} KB)")
+    # Stale tiles from a build when more repositories were pinned would keep
+    # being served by anything still pointing at them.
+    for f in os.listdir(args.outdir):
+        if f.startswith("repo-") and f.endswith(".svg"):
+            os.remove(os.path.join(args.outdir, f))
+
+    n = 0
+    for theme in ("dark", "light"):
+        t = THEMES[theme]
+        write(os.path.join(args.outdir, f"code-head-{theme}.svg"),
+              code_head(t, len(pinned)))
+        write(os.path.join(args.outdir, f"code-all-{theme}.svg"),
+              code_all(t, total))
+        for i, r in enumerate(pinned):
+            write(os.path.join(args.outdir, f"repo-{i}-{theme}.svg"),
+                  repo_tile(t, r, i))
+        for i, (key, label, val, _) in enumerate(LINKS):
+            write(os.path.join(args.outdir, f"link-{key}-{theme}.svg"),
+                  link_chip(t, label, val, i))
+        n += 2 + len(pinned) + len(LINKS)
+    print(f"wrote {n} panel files to {args.outdir}/")
+
+    # Two tiles a line: 434 + 434 plus the space between them clears 880.
+    rows = []
+    for i in range(0, len(pinned), 2):
+        rows.append(" ".join(
+            f'<a href="https://github.com/{args.user}/{r["name"]}">'
+            f'<img alt="{esc(r["name"])}" src="./dist/repo-{i+j}-dark.svg" '
+            f'width="434"></a>'
+            for j, r in enumerate(pinned[i:i + 2])))
+    links = " ".join(
+        f'<a href="{href}"><img alt="{label}: {esc(val)}" '
+        f'src="./dist/link-{key}-dark.svg" width="211"></a>'
+        for key, label, val, href in LINKS)
+
+    with open(args.readme, "w", encoding="utf-8") as fh:
+        fh.write(README.format(user=args.user, total=total,
+                               tiles="\n".join(rows), links=links))
+    print(f"wrote {args.readme}  ({len(pinned)} tiles, {len(LINKS)} contact chips)")
     return 0
 
 

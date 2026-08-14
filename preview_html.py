@@ -13,12 +13,33 @@ from __future__ import annotations
 
 import argparse
 import base64
+import json
 import os
 
-ORDER = ["header", "code", "shooter", "footer"]
+REPO_CACHE = "dist/.repo-cache.json"
 
-# Panels that are wrapped in a link, the same way the README wraps them.
-PANEL_LINK = {"code": "https://github.com/kartic03?tab=repositories"}
+USER = "kartic03"
+
+# The preview mirrors the README exactly, including its links: full-width rows
+# on their own line, tiles and chips flowing two and four to a row.
+ROWS = [
+    ["header"],
+    ["code-head"],
+    "TILES",                       # expands to repo-0 .. repo-N, 434px each
+    ["code-all"],
+    ["shooter"],
+    ["link-cv", "link-orcid", "link-email", "link-github"],
+]
+
+LINK = {
+    "code-all": f"https://github.com/{USER}?tab=repositories",
+    "link-cv": f"https://{USER}.github.io/cv/",
+    "link-orcid": "https://orcid.org/0009-0005-5939-4192",
+    "link-email": "mailto:karticmishra03@gmail.com",
+    "link-github": f"https://github.com/{USER}",
+}
+
+WIDTH = {"link-": 211, "repo-": 434}     # everything else is full width
 
 PAGE = """<!DOCTYPE html>
 <!-- dark is forced: no prefers-color-scheme query anywhere, so the OS setting
@@ -56,10 +77,15 @@ PAGE = """<!DOCTYPE html>
   #theme.on{{color:#FFC862;border-color:#8A6A2E}}
   #theme.on .bulb .rays{{opacity:1}}
   #theme.on .bulb .glass{{fill:#FFC862;fill-opacity:.28}}
-  img{{width:min(880px,100%);height:auto;display:block;border-radius:18px}}
-  /* the code panel is a link, matching the README; the chip inside it is the
-     visible affordance, so the wrapper only needs a focus ring */
-  a.panel{{display:block;border-radius:18px;outline-offset:3px}}
+  /* rows mirror the README: full-width panels alone, tiles two across,
+     contact chips four across, wrapping on narrow screens the same way */
+  .row{{display:flex;flex-wrap:wrap;gap:10px;width:min(880px,100%);
+    justify-content:flex-start}}
+  img{{max-width:100%;height:auto;display:block;border-radius:14px}}
+  .row > img, .row > a{{flex:0 1 auto;min-width:0}}
+  a.panel{{display:block;border-radius:14px;outline-offset:3px;
+    transition:transform .15s}}
+  a.panel:hover{{transform:translateY(-2px)}}
   a.panel:focus-visible{{outline:2px solid #E455C0}}
 </style>
 </head>
@@ -120,28 +146,53 @@ def main() -> int:
     ap.add_argument("--out", default="dist/page.html")
     args = ap.parse_args()
 
-    dark, light, present = {}, {}, []
-    for n in ORDER:
-        d = os.path.join(args.dir, f"{n}-dark.svg")
-        l = os.path.join(args.dir, f"{n}-light.svg")
-        if not os.path.exists(d):
-            print(f"  skip {n}")
-            continue
-        dark[n] = uri(d)
-        light[n] = uri(l) if os.path.exists(l) else dark[n]
-        present.append(n)
-        print(f"  {n:<9} {os.path.getsize(d)/1024:6.1f} KB")
+    tiles = sorted(
+        (f[:-9] for f in os.listdir(args.dir)
+         if f.startswith("repo-") and f.endswith("-dark.svg")),
+        key=lambda s: int(s.split("-")[1]))
+    repo_href = {}
+    if os.path.exists(REPO_CACHE):
+        names = [r["name"] for r in json.load(open(REPO_CACHE, encoding="utf-8"))
+                 if r["name"].lower() != USER.lower()]
+        for i, name in enumerate(names[:len(tiles)]):
+            repo_href[f"repo-{i}"] = f"https://github.com/{USER}/{name}"
 
+    rows: list[list[str]] = []
+    for row in ROWS:
+        rows.append(tiles if row == "TILES" else row)
+
+    dark, light, present = {}, {}, []
+    for row in rows:
+        for n in row:
+            d = os.path.join(args.dir, f"{n}-dark.svg")
+            if not os.path.exists(d):
+                print(f"  skip {n}")
+                continue
+            l = os.path.join(args.dir, f"{n}-light.svg")
+            dark[n] = uri(d)
+            light[n] = uri(l) if os.path.exists(l) else dark[n]
+            present.append(n)
+            print(f"  {n:<26} {os.path.getsize(d)/1024:6.1f} KB")
+
+    idx = {n: i for i, n in enumerate(present)}
     parts = []
-    for i, n in enumerate(present):
-        tag = f'<img id="p{i}" alt="{n}" src="{dark[n]}">'
-        if n in PANEL_LINK:
-            tag = (f'<a class="panel" href="{PANEL_LINK[n]}" '
-                   f'target="_blank" rel="noopener">{tag}</a>')
-        parts.append(tag)
+    for row in rows:
+        row = [n for n in row if n in idx]
+        if not row:
+            continue
+        cells = []
+        for n in row:
+            w = next((v for p, v in WIDTH.items() if n.startswith(p)), 880)
+            tag = (f'<img id="p{idx[n]}" alt="{n}" src="{dark[n]}" '
+                   f'style="width:{w}px">')
+            href = LINK.get(n) or repo_href.get(n)
+            if href:
+                tag = (f'<a class="panel" href="{href}" target="_blank" '
+                       f'rel="noopener">{tag}</a>')
+            cells.append(tag)
+        parts.append('<div class="row">' + "".join(cells) + "</div>")
     imgs = "\n".join(parts)
 
-    import json
     html = PAGE.format(imgs=imgs, dark=json.dumps(dark), light=json.dumps(light),
                        names=json.dumps(present))
     with open(args.out, "w", encoding="utf-8") as fh:
