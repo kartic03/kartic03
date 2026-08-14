@@ -17,6 +17,9 @@ import os
 
 ORDER = ["header", "code", "shooter", "footer"]
 
+# Panels that are wrapped in a link, the same way the README wraps them.
+PANEL_LINK = {"code": "https://github.com/kartic03?tab=repositories"}
+
 PAGE = """<!DOCTYPE html>
 <!-- dark is forced: no prefers-color-scheme query anywhere, so the OS setting
      is ignored and brightfield is opt-in via the toggle -->
@@ -54,6 +57,10 @@ PAGE = """<!DOCTYPE html>
   #theme.on .bulb .rays{{opacity:1}}
   #theme.on .bulb .glass{{fill:#FFC862;fill-opacity:.28}}
   img{{width:min(880px,100%);height:auto;display:block;border-radius:18px}}
+  /* the code panel is a link, matching the README; the chip inside it is the
+     visible affordance, so the wrapper only needs a focus ring */
+  a.panel{{display:block;border-radius:18px;outline-offset:3px}}
+  a.panel:focus-visible{{outline:2px solid #E455C0}}
 </style>
 </head>
 <body>
@@ -125,8 +132,14 @@ def main() -> int:
         present.append(n)
         print(f"  {n:<9} {os.path.getsize(d)/1024:6.1f} KB")
 
-    imgs = "\n".join(
-        f'<img id="p{i}" alt="{n}" src="{dark[n]}">' for i, n in enumerate(present))
+    parts = []
+    for i, n in enumerate(present):
+        tag = f'<img id="p{i}" alt="{n}" src="{dark[n]}">'
+        if n in PANEL_LINK:
+            tag = (f'<a class="panel" href="{PANEL_LINK[n]}" '
+                   f'target="_blank" rel="noopener">{tag}</a>')
+        parts.append(tag)
+    imgs = "\n".join(parts)
 
     import json
     html = PAGE.format(imgs=imgs, dark=json.dumps(dark), light=json.dumps(light),
