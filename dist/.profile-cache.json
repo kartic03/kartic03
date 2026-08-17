@@ -38,10 +38,10 @@
  "totals": {
   "Jupyter Notebook": 425943,
   "Python": 3095111,
-  "HTML": 74889,
+  "HTML": 75135,
   "Shell": 34697,
-  "JavaScript": 172980,
-  "CSS": 42407,
+  "JavaScript": 264179,
+  "CSS": 56482,
   "PLpgSQL": 12406,
   "R": 9750
  }
