@@ -27,22 +27,19 @@
   "hireable": null,
   "bio": null,
   "twitter_username": null,
-  "public_repos": 10,
+  "public_repos": 9,
   "public_gists": 0,
   "followers": 0,
   "following": 0,
   "created_at": "2024-10-21T08:16:00Z",
-  "updated_at": "2026-08-14T01:47:17Z"
+  "updated_at": "2026-08-17T04:52:30Z"
  },
- "repo_count": 10,
+ "repo_count": 9,
  "totals": {
   "Jupyter Notebook": 425943,
-  "Python": 3095111,
+  "Python": 3095494,
   "HTML": 75135,
   "Shell": 34697,
-  "JavaScript": 264179,
-  "CSS": 56482,
-  "PLpgSQL": 12406,
   "R": 9750
  }
 }
