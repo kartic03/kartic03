@@ -104,6 +104,16 @@ MAX_CARDS = 8
 # the CV repository is a deployment, and the page it deploys is the point.
 REPO_LINK = {"cv": "https://kartic03.github.io/cv/"}
 
+# Never pinned, however recently they were pushed. Matching is on a normalised
+# name, so neelam-niwas, Nilam_Niwas and NeelamNiwas are all the same entry.
+# The profile repository is added at run time: a tile linking to the page you
+# are already reading is noise, and it costs a real repository its slot.
+HIDE = {"neelamniwas", "nilamniwas"}
+
+
+def norm(name: str) -> str:
+    return "".join(c for c in name.lower() if c.isalnum())
+
 
 def fetch_repos(user: str) -> list[dict]:
     """Live repository list, newest activity first, cached against API failure.
@@ -149,9 +159,9 @@ LINKS = [
     #           opens a bare standalone compose popup with no Gmail around it.
     #   fs=1    full screen, not the small corner window
     # &amp; because this goes straight into an href attribute.
-    ("email", "EMAIL", "karticmishra03@gmail.com",
+    ("email", "EMAIL", "hi.kartic@gmail.com",
      "https://mail.google.com/mail/u/0/?fs=1&amp;tf=cm"
-     "&amp;to=karticmishra03@gmail.com"),
+     "&amp;to=hi.kartic@gmail.com"),
     ("github", "GITHUB", "github.com/kartic03", "https://github.com/kartic03"),
 ]
 
@@ -579,10 +589,11 @@ def main() -> int:
     os.makedirs(args.outdir, exist_ok=True)
 
     repos = fetch_repos(args.user)
-    # The profile repository is this README's own home. It is real work, but a
-    # tile linking to the page you are already looking at is noise, and it was
-    # costing a genuine repository its slot.
-    repos = [r for r in repos if r["name"].lower() != args.user.lower()]
+    hide = HIDE | {norm(args.user)}
+    dropped = [r["name"] for r in repos if norm(r["name"]) in hide]
+    repos = [r for r in repos if norm(r["name"]) not in hide]
+    if dropped:
+        print("   hidden by name: " + ", ".join(dropped))
     total = len(repos)
     pinned = repos[:MAX_CARDS]
     print(f"{total} repositories; pinning the {len(pinned)} newest-pushed")

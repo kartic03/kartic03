@@ -34,7 +34,7 @@
 
 <a href="https://github.com/kartic03?tab=repositories" target="_blank" rel="noopener noreferrer"><img alt="All 9 repositories" src="./dist/code-all-dark.svg" width="828"></a>
 
-<a href="https://kartic03.github.io/cv/" target="_blank" rel="noopener noreferrer"><img alt="CV: kartic03.github.io/cv" src="./dist/link-cv-dark.svg" width="207"></a><a href="https://orcid.org/0009-0005-5939-4192" target="_blank" rel="noopener noreferrer"><img alt="ORCID: 0009-0005-5939-4192" src="./dist/link-orcid-dark.svg" width="207"></a><a href="https://mail.google.com/mail/u/0/?fs=1&amp;tf=cm&amp;to=karticmishra03@gmail.com" target="_blank" rel="noopener noreferrer"><img alt="EMAIL: karticmishra03@gmail.com" src="./dist/link-email-dark.svg" width="207"></a><a href="https://github.com/kartic03" target="_blank" rel="noopener noreferrer"><img alt="GITHUB: github.com/kartic03" src="./dist/link-github-dark.svg" width="207"></a>
+<a href="https://kartic03.github.io/cv/" target="_blank" rel="noopener noreferrer"><img alt="CV: kartic03.github.io/cv" src="./dist/link-cv-dark.svg" width="207"></a><a href="https://orcid.org/0009-0005-5939-4192" target="_blank" rel="noopener noreferrer"><img alt="ORCID: 0009-0005-5939-4192" src="./dist/link-orcid-dark.svg" width="207"></a><a href="https://mail.google.com/mail/u/0/?fs=1&amp;tf=cm&amp;to=hi.kartic@gmail.com" target="_blank" rel="noopener noreferrer"><img alt="EMAIL: hi.kartic@gmail.com" src="./dist/link-email-dark.svg" width="207"></a><a href="https://github.com/kartic03" target="_blank" rel="noopener noreferrer"><img alt="GITHUB: github.com/kartic03" src="./dist/link-github-dark.svg" width="207"></a>
 
 <!--
   Every panel is generated, not hand-drawn.

@@ -39,7 +39,7 @@ LINK = {
     "link-cv": f"https://{USER}.github.io/cv/",
     "link-orcid": "https://orcid.org/0009-0005-5939-4192",
     "link-email": ("https://mail.google.com/mail/?view=cm&amp;fs=1"
-                   "&amp;to=karticmishra03@gmail.com"),
+                   "&amp;to=hi.kartic@gmail.com"),
     "link-github": f"https://github.com/{USER}",
 }
 
