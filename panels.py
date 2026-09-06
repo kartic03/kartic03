@@ -253,7 +253,7 @@ def research(t: dict) -> str:
     a = o.append
     a(f'<text class="t" x="30" y="38">RESEARCH PIPELINE</text>')
     a(f'<text class="s" x="30" y="56">nine manuscripts &#183; seven first-authored '
-      f'&#183; four published, one in press</text>')
+      f'&#183; five published</text>')
 
     tx = 470          # where the track starts
     tw = 372
