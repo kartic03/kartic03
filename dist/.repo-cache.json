@@ -1,12 +1,12 @@
 [
  {
-  "name": "RATAN-PBind",
-  "desc": "Residue Attribution and Target Affinity Network for Protein Binding",
+  "name": "kartic03",
+  "desc": "",
   "lang": "Python"
  },
  {
-  "name": "kartic03",
-  "desc": "",
+  "name": "RATAN-PBind",
+  "desc": "Residue Attribution and Target Affinity Network for Protein Binding",
   "lang": "Python"
  },
  {
