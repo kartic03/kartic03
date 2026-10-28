@@ -1,5 +1,10 @@
 [
  {
+  "name": "RATAN-PBind",
+  "desc": "Retrieval-Augmented, Target-Aware Nomination for Protein Binding: sequence-based prioritisation of de novo binders within a measured applicability domain",
+  "lang": "Python"
+ },
+ {
   "name": "kartic03",
   "desc": "",
   "lang": "Python"
@@ -13,11 +18,6 @@
   "name": "BBB-Trans-AI",
   "desc": "",
   "lang": "Jupyter Notebook"
- },
- {
-  "name": "RATAN-PBind",
-  "desc": "Residue Attribution and Target Affinity Network for Protein Binding",
-  "lang": "Python"
  },
  {
   "name": "cv",
