@@ -1,12 +1,12 @@
 [
  {
-  "name": "RATAN-PBind",
-  "desc": "Retrieval-Augmented, Target-Aware Nomination for Protein Binding: sequence-based prioritisation of de novo binders within a measured applicability domain",
+  "name": "kartic03",
+  "desc": "",
   "lang": "Python"
  },
  {
-  "name": "kartic03",
-  "desc": "",
+  "name": "RATAN-PBind",
+  "desc": "Retrieval-Augmented, Target-Aware Nomination for Protein Binding: sequence-based prioritisation of de novo binders within a measured applicability domain",
   "lang": "Python"
  },
  {
