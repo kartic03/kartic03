@@ -37,8 +37,10 @@
  "repo_count": 9,
  "totals": {
   "Jupyter Notebook": 425943,
-  "Python": 3255077,
-  "HTML": 77241,
+  "Python": 3286012,
+  "JavaScript": 37007,
+  "CSS": 36498,
+  "HTML": 63059,
   "Shell": 34697,
   "R": 9750
  }
